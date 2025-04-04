@@ -54,8 +54,8 @@ router.post("/send-telegram", async (req, res) => {
     await TelegramLog.create({
       telegramId: user.id,
       username: user.username || '',
-      code,
-      reward,
+      code : code,
+      reward : reward,
       fullName: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
     });
     console.log(44444)
