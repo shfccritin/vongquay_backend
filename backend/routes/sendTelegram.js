@@ -27,24 +27,17 @@ function verifyTelegramUser(user, botToken) {
 
 router.post("/send-telegram", async (req, res) => {
   const { user, code, reward } = req.body;
-  console.log('user', user);
-  console.log('code', code);
-  console.log('reward', reward);
   if (!user || !user.id || !code || !reward || !user.hash) {
     return res.status(400).json({ message: "Thiếu thông tin hợp lệ." });
   }
 
   const isVerified = verifyTelegramUser(user, process.env.TELEGRAM_BOT_TOKEN);
-  console.log(1111)
   if (!isVerified) {
     return res.status(403).json({ message: "Xác thực Telegram không hợp lệ." });
   }
-  console.log(222222)
 
   try {
     const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
-    console.log("TELEGRAM_API:", TELEGRAM_API);
-    console.log("TOKEN:", process.env.TELEGRAM_BOT_TOKEN);
     await axios.post(TELEGRAM_API, {
       chat_id: user.id,
       text: `🎉 Bạn đã trúng phần thưởng: ${reward}\n🔑 Mã nhận quà: ${code}`,
@@ -52,7 +45,6 @@ router.post("/send-telegram", async (req, res) => {
       family: 4  // 🔒 ép dùng IPv4, bỏ qua IPv6 gây lỗi
     });
 
-    console.log(33333)
 
     // Lưu log vào DB
     await TelegramLog.create({
@@ -62,7 +54,6 @@ router.post("/send-telegram", async (req, res) => {
       reward: reward,
       fullName: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
     });
-    console.log(44444)
 
     return res.json({ success: true });
   } catch (err) {
