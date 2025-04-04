@@ -14,10 +14,7 @@ const adminLogRoutes = require("./routes/adminLogRoutes");
 const publicRoutes = require("./routes/publicRoutes");
 const adminRewardCodeRoutes = require("./routes/adminRewardCodeRoutes")
 const sendTelegram = require('./routes/sendTelegram')
-app.use(cors({
-  origin: 'https://vongquayf168.net',
-  credentials: true
-}));
+app.use(cors());
 
 app.use(express.json());
 
