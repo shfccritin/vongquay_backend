@@ -14,6 +14,8 @@ const adminLogRoutes = require("./routes/adminLogRoutes");
 const publicRoutes = require("./routes/publicRoutes");
 const adminRewardCodeRoutes = require("./routes/adminRewardCodeRoutes")
 const sendTelegram = require('./routes/sendTelegram')
+const getCode = require('./routes/getCode')
+const Code = require('./models/Code')
 app.use(cors());
 
 app.use(express.json());
@@ -21,7 +23,6 @@ app.use(express.json());
 // Kết nối MongoDB
 mongoose.connect(process.env.MONGO_URI).then(() => console.log("✅ MongoDB connected"))
   .catch(err => console.error("❌ MongoDB error:", err));
-
 
 // Routes
 app.get("/", (req, res) => {
@@ -36,6 +37,7 @@ app.use("/api/admin/logs", adminLogRoutes);
 app.use("/api/public", publicRoutes);
 app.use("/api/admin/reward-codes",adminRewardCodeRoutes);
 app.use("/api",sendTelegram);
+app.use("/api",getCode);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

@@ -4,6 +4,7 @@ const codeSchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true },
   used: { type: Boolean, default: false },
   usedAt: { type: Date, default: null },
+  isget: {type:Boolean,default:false}
 });
 
 module.exports = mongoose.model("Code", codeSchema);
