@@ -43,7 +43,8 @@ router.post("/send-telegram", async (req, res) => {
 
   try {
     const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
-
+    console.log("TELEGRAM_API:", TELEGRAM_API);
+    console.log("TOKEN:", process.env.TELEGRAM_BOT_TOKEN);
     await axios.post(TELEGRAM_API, {
       chat_id: user.id,
       text: `🎉 Bạn đã trúng phần thưởng: ${reward}\n🔑 Mã nhận quà: ${code}`,
