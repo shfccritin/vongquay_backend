@@ -33,10 +33,11 @@ router.post("/send-telegram", async (req, res) => {
   }
 
   const isVerified = verifyTelegramUser(user, process.env.TELEGRAM_BOT_TOKEN);
-
+  console.log(1111)
   if (!isVerified) {
     return res.status(403).json({ message: "Xác thực Telegram không hợp lệ." });
   }
+  console.log(222222)
 
   try {
     const TELEGRAM_API = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
@@ -45,7 +46,8 @@ router.post("/send-telegram", async (req, res) => {
       chat_id: user.id,
       text: `🎉 Bạn đã trúng phần thưởng: ${reward}\n🔑 Mã nhận quà: ${code}`,
     });
-
+  console.log(33333)
+      
     // Lưu log vào DB
     await TelegramLog.create({
       telegramId: user.id,
@@ -54,6 +56,7 @@ router.post("/send-telegram", async (req, res) => {
       reward,
       fullName: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
     });
+    console.log(44444)
 
     return res.json({ success: true });
   } catch (err) {
