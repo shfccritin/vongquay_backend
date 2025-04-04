@@ -24,6 +24,22 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI).then(() => console.log("✅ MongoDB connected"))
   .catch(err => console.error("❌ MongoDB error:", err));
 
+  async function updateIsGetField() {
+    try {
+      const result = await Code.updateMany(
+        { isget: { $exists: false } },
+        { $set: { isget: false } }
+      );
+
+      console.log("Updated documents:", result.modifiedCount);
+    } catch (err) {
+      console.error("Error updating documents:", err);
+    } finally {
+      mongoose.connection.close();
+    }
+  }
+  
+  updateIsGetField();
 // Routes
 app.get("/", (req, res) => {
   res.send("🎯 Backend API is running!");
