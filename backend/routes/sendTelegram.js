@@ -63,7 +63,7 @@ router.post("/send-telegram", async (req, res) => {
 
     return res.json({ success: true });
   } catch (err) {
-    console.error("Telegram API error:", err.response?.data || err.message);
+    console.error("Telegram API error:", err);
     return res.status(500).json({ message: "Không thể gửi mã đến Telegram." });
   }
 });
