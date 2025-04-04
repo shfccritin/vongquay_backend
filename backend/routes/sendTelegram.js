@@ -27,9 +27,9 @@ function verifyTelegramUser(user, botToken) {
 
 router.post("/send-telegram", async (req, res) => {
   const { user, code, reward } = req.body;
-  console.log('user' ,user);
-  console.log('code' ,code);
-  console.log('reward' ,reward);
+  console.log('user', user);
+  console.log('code', code);
+  console.log('reward', reward);
   if (!user || !user.id || !code || !reward || !user.hash) {
     return res.status(400).json({ message: "Thiếu thông tin hợp lệ." });
   }
@@ -48,15 +48,18 @@ router.post("/send-telegram", async (req, res) => {
     await axios.post(TELEGRAM_API, {
       chat_id: user.id,
       text: `🎉 Bạn đã trúng phần thưởng: ${reward}\n🔑 Mã nhận quà: ${code}`,
+    }, {
+      family: 4  // 🔒 ép dùng IPv4, bỏ qua IPv6 gây lỗi
     });
-  console.log(33333)
-      
+
+    console.log(33333)
+
     // Lưu log vào DB
     await TelegramLog.create({
       telegramId: user.id,
       username: user.username || '',
-      code : code,
-      reward : reward,
+      code: code,
+      reward: reward,
       fullName: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
     });
     console.log(44444)
