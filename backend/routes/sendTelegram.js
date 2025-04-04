@@ -27,7 +27,7 @@ function verifyTelegramUser(user, botToken) {
 
 router.post("/send-telegram", async (req, res) => {
   const { user, code, reward } = req.body;
-
+  console.log(user,code,reward);
   if (!user || !user.id || !code || !reward || !user.hash) {
     return res.status(400).json({ message: "Thiếu thông tin hợp lệ." });
   }
