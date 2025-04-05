@@ -16,6 +16,9 @@ const adminRewardCodeRoutes = require("./routes/adminRewardCodeRoutes")
 const sendTelegram = require('./routes/sendTelegram')
 const getCode = require('./routes/getCode')
 const broadcastRoute = require('./routes/sendBroadcast');
+const startTelegramBot = require('./services/telegramBot');
+startTelegramBot(process.env.TELEGRAM_BOT_TOKEN);
+
 app.use(cors());
 
 app.use(express.json());
