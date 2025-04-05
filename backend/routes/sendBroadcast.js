@@ -1,6 +1,6 @@
 const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
-const TelegramLog = require('../models/TelegramLog'); 
+const TelegramLog = require('../models/TelegramLog');
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
 const router = express.Router();
@@ -18,12 +18,8 @@ const auth = (req, res, next) => {
   }
 };
 
-router.post('/send-broadcast',auth, async (req, res) => {
+router.post('/send-broadcast', auth, async (req, res) => {
   const { message } = req.body;
-
-  if (!message || message.trim() === '') {
-    return res.status(400).json({ error: 'Nội dung tin nhắn không được bỏ trống' });
-  }
 
   if (!message || message.trim() === '') {
     return res.status(400).json({ error: 'Nội dung tin nhắn không được bỏ trống' });
@@ -34,7 +30,8 @@ router.post('/send-broadcast',auth, async (req, res) => {
 
     for (const user of users) {
       try {
-        await bot.sendMessage(user.telegramId, message, { parse_mode: 'Markdown' });
+        const cleanMessage = message.replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&');
+        await bot.sendMessage(user.telegramId, cleanMessage, { parse_mode: 'MarkdownV2' });
         success++;
       } catch (err) {
         console.error(`❌ Không gửi được cho ${user.telegramId}: ${err.message}`);
