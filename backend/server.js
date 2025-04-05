@@ -15,7 +15,7 @@ const publicRoutes = require("./routes/publicRoutes");
 const adminRewardCodeRoutes = require("./routes/adminRewardCodeRoutes")
 const sendTelegram = require('./routes/sendTelegram')
 const getCode = require('./routes/getCode')
-const Code = require('./models/Code')
+const broadcastRoute = require('./routes/sendBroadcast');
 app.use(cors());
 
 app.use(express.json());
@@ -38,6 +38,7 @@ app.use("/api/public", publicRoutes);
 app.use("/api/admin/reward-codes",adminRewardCodeRoutes);
 app.use("/api",sendTelegram);
 app.use("/api",getCode);
+app.use("/api",broadcastRoute);
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
