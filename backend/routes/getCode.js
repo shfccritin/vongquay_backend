@@ -8,13 +8,13 @@ const Code = require("../models/Code");
 router.get("/get-code", async (req, res) => {
   try {
     const code = await Code.findOneAndUpdate(
-      { isget: false },         // chỉ lấy những code chưa get
-      { $set: { isget: true } }, // cập nhật thành đã get
-      { new: true }              // trả về bản ghi sau khi update
+      { isget: false, used: false },      // Lọc cả isget và used
+      { $set: { isget: true } },          // Đánh dấu là đã get
+      { new: true }                       // Trả về document sau khi update
     );
 
     if (!code) {
-      return res.status(404).json({ message: "Hết code chưa được lấy" });
+      return res.status(404).json({ message: "Hết code hợp lệ (chưa get & chưa dùng)" });
     }
 
     res.json({ ma: code.code });
@@ -23,5 +23,8 @@ router.get("/get-code", async (req, res) => {
     res.status(500).json({ message: "Lỗi server" });
   }
 });
+
+module.exports = router;
+
 
 module.exports = router;
