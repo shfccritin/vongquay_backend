@@ -10,7 +10,8 @@ router.post("/check-code", async (req, res) => {
   const { code } = req.body;
   const found = await Code.findOne({ code });
   if (!found) return res.status(400).json({ success: false, message: "Mã không tồn tại" });
-  if (found.used) return res.status(400).json({ success: false, message: `Mã đã được sử dụng rồi. Mã code khuyến mãi của bạn là: ${found.promoCode}` });
+  if (found.used) return res.status(400).json({ success: false, message: `🎉 Mã dự thưởng này đã được sử dụng trước đó.\n
+      👉 Phần thưởng của bạn: *${found.promoCode}*, Mã khuyến mãi: : *${found.reward}*` });
   return res.json({ success: true, message: "Mã hợp lệ" });
 });
 
@@ -18,22 +19,24 @@ router.post("/check-code", async (req, res) => {
 ///API quay
 router.post("/spin", async (req, res) => {
   const { code } = req.body;
+
   // Kiểm tra mã quay
   const codeEntry = await Code.findOne({ code });
-
-  if(codeEntry.promoCode && codeEntry.used){
+  if (codeEntry.promoCode && codeEntry.used) {
     return res.status(400).json({
       success: false,
-      message: `Bạn đã dùng mã dự thưởng này rồi. Mã code khuyến mãi của bạn là: ${codeEntry.promoCode}`
+      message: `🎉 Mã dự thưởng này đã được sử dụng trước đó.\n
+      👉 Phần thưởng của bạn: *${codeEntry.reward}*\n
+      🔑 Mã khuyến mãi: *${codeEntry.promoCode}*`
     });
   }
   
   if (!codeEntry || codeEntry.used)
     return res.status(400).json({ success: false, message: "Mã không hợp lệ hoặc đã sử dụng" });
-
   const rewards = await Reward.find({ isFake: { $ne: true }, chance: { $gt: 0 } });
   if (!rewards.length)
     return res.status(500).json({ success: false, message: "Không có phần thưởng hợp lệ nào" });
+
   // Chọn phần thưởng theo tỷ lệ
   const totalChance = rewards.reduce((sum, r) => sum + r.chance, 0);
   let rand = Math.random() * totalChance;
@@ -65,6 +68,7 @@ router.post("/spin", async (req, res) => {
   codeEntry.used = true;
   codeEntry.usedAt = new Date();
   codeEntry.promoCode = rewardCode.code ;
+  codeEntry.reward = selectedReward.label
   await codeEntry.save();
 
   // Ghi log quay

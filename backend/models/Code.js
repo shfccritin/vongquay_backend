@@ -5,7 +5,8 @@ const codeSchema = new mongoose.Schema({
   used: { type: Boolean, default: false },
   usedAt: { type: Date, default: null },
   isget: {type:Boolean,default:false},
-  promoCode:{type:String,default:''}
+  promoCode:{type:String,default:''},
+  reward: {type:String,default:''}
 });
 
 module.exports = mongoose.model("Code", codeSchema);
