@@ -10,7 +10,7 @@ router.post("/check-code", async (req, res) => {
   const { code } = req.body;
   const found = await Code.findOne({ code });
   if (!found) return res.status(400).json({ success: false, message: "Mã không tồn tại" });
-  if (found.used) return res.status(400).json({ success: false, message: "Mã đã được sử dụng" });
+  if (found.used) return res.status(400).json({ success: false, message: `Mã đã được sử dụng rồi. Mã code khuyến mãi của bạn là: ${found.promoCode}` });
   return res.json({ success: true, message: "Mã hợp lệ" });
 });
 
@@ -20,9 +20,17 @@ router.post("/spin", async (req, res) => {
   const { code } = req.body;
   // Kiểm tra mã quay
   const codeEntry = await Code.findOne({ code });
+
+  if(codeEntry.promoCode && codeEntry.used){
+    return res.status(400).json({
+      success: false,
+      message: `Bạn đã dùng mã dự thưởng này rồi. Mã code khuyến mãi của bạn là: ${codeEntry.promoCode}`
+    });
+  }
+  
   if (!codeEntry || codeEntry.used)
     return res.status(400).json({ success: false, message: "Mã không hợp lệ hoặc đã sử dụng" });
-  // Lấy danh sách phần thưởng thật, có tỷ lệ
+
   const rewards = await Reward.find({ isFake: { $ne: true }, chance: { $gt: 0 } });
   if (!rewards.length)
     return res.status(500).json({ success: false, message: "Không có phần thưởng hợp lệ nào" });
@@ -56,6 +64,7 @@ router.post("/spin", async (req, res) => {
   // Đánh dấu mã quay đã dùng
   codeEntry.used = true;
   codeEntry.usedAt = new Date();
+  codeEntry.promoCode = rewardCode.code ;
   await codeEntry.save();
 
   // Ghi log quay
@@ -64,7 +73,7 @@ router.post("/spin", async (req, res) => {
     reward: selectedReward.label,
     createdAt: new Date()
   }).save();
-
+  
   // Trả kết quả về client
   return res.json({
     success: true,

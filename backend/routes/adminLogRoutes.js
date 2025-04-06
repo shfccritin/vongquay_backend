@@ -16,8 +16,20 @@ router.get("/", async (req, res) => {
     end.setDate(end.getDate() + 1);
     filter.createdAt = { $gte: start, $lt: end };
   }
+
   const logs = await SpinLog.find(filter).sort({ createdAt: -1 });
-  res.json(logs);
+
+  const maskedLogs = logs.map(log => {
+    const maskedCode = log.code.length > 3
+      ? log.code.slice(0, -3) + '***'
+      : '***'; // nếu code ngắn hơn 3 ký tự
+    return {
+      ...log.toObject(),
+      code: maskedCode,
+    };
+  });
+
+  res.json(maskedLogs);
 });
 
 module.exports = router;

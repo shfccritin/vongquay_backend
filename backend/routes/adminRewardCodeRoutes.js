@@ -105,7 +105,6 @@ router.post("/import", auth, async (req, res) => {
     inserted.push({ rewardId, code });
   }
 
-  // Nếu có mã mới thì lưu
   if (inserted.length > 0) {
     await RewardCode.insertMany(inserted);
   }
