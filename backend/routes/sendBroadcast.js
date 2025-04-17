@@ -7,9 +7,9 @@ require('dotenv').config();
 const router = express.Router();
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN);
 
-// Escape MarkdownV2 an toàn
 function escapeMarkdownV2(text) {
   return text
+    .replace(/\\/g, '\\\\') 
     .replace(/_/g, '\\_')
     .replace(/\*/g, '\\*')
     .replace(/\[/g, '\\[')
@@ -27,11 +27,9 @@ function escapeMarkdownV2(text) {
     .replace(/{/g, '\\{')
     .replace(/}/g, '\\}')
     .replace(/\./g, '\\.')
-    .replace(/!/g, '\\!')
-    .replace(/\\/g, '\\\\');
+    .replace(/!/g, '\\!');
 }
 
-// Middleware xác thực bằng JWT
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.sendStatus(401);
@@ -44,8 +42,6 @@ const auth = (req, res, next) => {
     return res.sendStatus(403);
   }
 };
-
-// Route gửi broadcast
 router.post('/send-broadcast', auth, async (req, res) => {
   const { message } = req.body;
 
@@ -80,3 +76,5 @@ router.post('/send-broadcast', auth, async (req, res) => {
 });
 
 module.exports = router;
+
+
