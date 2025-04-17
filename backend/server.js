@@ -86,13 +86,21 @@ function escapeMarkdownV2(text) {
     .replace(/!/g, '\\!');
 }
 
-const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
+const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, {
+  polling: true,
+  request: {
+    agentOptions: {
+      keepAlive: true,
+      family: 4 
+    }
+  }
+});
+
 
 bot.on('polling_error', (err) => {
   console.error('❌ polling_error:', err.message);
 });
 
-// Xử lý lệnh /start
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const from = msg.from;
