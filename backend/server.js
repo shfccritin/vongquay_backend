@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const TelegramBot = require('node-telegram-bot-api');
 const jwt = require('jsonwebtoken')
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + '/.env' });
 require('./cron/liveScheduler'); 
 
 const MessageLog = require('./models/MessageLog');
