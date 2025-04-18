@@ -55,7 +55,7 @@ cron.schedule('* * * * *', async () => {
 
     if (diff >= 0 && diff < 3 * 60 * 1000) {
       const message = `
-🔥 *CHÁY PHÒNG!* PHIÊN LIVE *${item.game.toUpperCase()}* CỦA *BLV ${item.blv.toUpperCase()}* CHÍNH THỨC BẮT ĐẦU\\!*
+🔥 *HOT HOT HOT!* PHIÊN LIVE *${item.game.toUpperCase()}* CỦA *BLV ${item.blv.toUpperCase()}* CHÍNH THỨC BẮT ĐẦU\\!*
 
 💥 Căng đét từng giây – Cháy quà từng phút – Gáy cực gắt cùng *BLV ${item.blv.toUpperCase()}*\\!
 🎁 Tương tác càng nhiều – Quà càng khủng\\!
