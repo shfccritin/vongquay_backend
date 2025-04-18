@@ -55,13 +55,34 @@ cron.schedule('* * * * *', async () => {
 
     if (diff >= 0 && diff < 3 * 60 * 1000) {
       const message = `
-🔥 *CHÁY PHÒNG!* PHIÊN LIVE *${item.game.toUpperCase()}* CỦA *BLV ${item.blv.toUpperCase()}* SẮP BẮT ĐẦU!
+🔥 *CHÁY PHÒNG!* PHIÊN LIVE *${item.game.toUpperCase()}* CỦA *BLV ${item.blv.toUpperCase()}* CHÍNH THỨC BẮT ĐẦU\\!*
 
-📺 *Link xem livestream:* ${item.link || 'https://www.facebook.com/f168tv.net'}
+💥 Căng đét từng giây – Cháy quà từng phút – Gáy cực gắt cùng *BLV ${item.blv.toUpperCase()}*\\!
+🎁 Tương tác càng nhiều – Quà càng khủng\\!
 
-🔹 Kênh chính thức: [F168TV](https://www.facebook.com/f168tv.net)
-🔹 Telegram: [F168PK](https://t.me/F168PK)
-      `;
+⏰ *VÀO NGAY KẺO HẾT – KHÔNG XEM LÀ PHÍ CẢ ĐỜI\\!*
+
+📺 *Link xem livestream:*
+🔗 ${item.link || 'https://www.facebook.com/f168tv.tv'}
+
+🔹 *Page chính thức \\(tích xanh\\):*
+👉 https://www.facebook.com/f168tv.net
+
+🔹 *Page PK Nổ Hũ:*
+👉 https://www.facebook.com/PKF168TV
+
+🔹 *Page PK Bắn Cá:*
+👉 https://www.facebook.com/PKBANCAF168TV
+
+🔹 *Channel Telegram Nổ Hũ:*
+👉 https://t.me/F168PK
+
+🔹 *Channel Telegram Bắn Cá:*
+👉 https://t.me/F168TVBANCA
+
+📢 Tag bạn bè vào room – gào thét cùng *${item.blv.toUpperCase()}* – săn quà quét sạch room ngay\\!
+`;
+
 
       const escaped = escapeMarkdownV2(message.trim());
       const users = await TelegramLog.find();
