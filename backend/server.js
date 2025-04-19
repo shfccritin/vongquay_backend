@@ -25,7 +25,7 @@ const broadcastRoute = require('./routes/sendBroadcast');
 const chatRoutes = require('./routes/chatRoutes');
 const unreadRoutes = require('./routes/unreadRoutes');
 const scheduleRoutes = require('./routes/scheduleRoutes');
-
+const manychatRoutes = require('./routes/manychatRoutes');
 app.use(cors());
 app.use(express.json());
 
@@ -51,7 +51,7 @@ app.use("/api", broadcastRoute);
 app.use('/api', chatRoutes);
 app.use('/api', unreadRoutes);
 app.use('/api', scheduleRoutes);
-
+app.use('/manychat', manychatRoutes);
 
 const http = require('http');
 const { Server } = require('socket.io');
