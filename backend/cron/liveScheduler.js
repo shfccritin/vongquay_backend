@@ -33,7 +33,6 @@ const escapeMarkdownV2 = (text) => {
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Gửi ManyChat
 async function sendManyChat(message) {
   const users = await ManychatUser.find();
   for (const user of users) {
@@ -54,7 +53,6 @@ async function sendManyChat(message) {
             }
           },
           message_tag: "ACCOUNT_UPDATE"
-          // ❌ Đừng dùng otn_topic_name nếu bạn không có topic đã bật
         },
         {
           headers: {
@@ -63,7 +61,6 @@ async function sendManyChat(message) {
           }
         }
       );
-
       console.log(`✅ ManyChat gửi thành công: ${user.subscriber_id}`);
       await delay(50);
     } catch (err) {
@@ -84,57 +81,57 @@ cron.schedule('* * * * *', async () => {
     const [h, m] = item.time.replace('h', ':').split(':').map(Number);
 
     const liveTime = new Date(item.date);
-    liveTime.setHours(h - item.countdown / 60);
-    liveTime.setMinutes(m - item.countdown);
+    liveTime.setHours(h - Math.floor(item.countdown / 60));
+    liveTime.setMinutes(m - (item.countdown % 60));
     liveTime.setSeconds(0);
     liveTime.setMilliseconds(0);
 
-    console.log(`⏱ BLV ${item.blv} | liveTime: ${liveTime.toLocaleString()} | Now: ${now.toLocaleString()}`);
-
     const diff = now - liveTime;
 
-    if (diff >= 0 && diff < 3 * 60 * 1000) {
+    // Sửa: chỉ gửi nếu đúng trong khoảng 1 phút
+    if (diff >= 0 && diff < 60 * 1000) {
+      console.log(`⏱ Gửi lịch BLV ${item.blv} | liveTime: ${liveTime.toLocaleString()} | Now: ${now.toLocaleString()}`);
+
       const message = `
-      🎉 *THÔNG BÁO ĐẶC BIỆT* 🎉
-      Chúng tôi xin thông báo về buổi livestream đặc biệt sắp tới tại *F168TV*. Đừng bỏ lỡ cơ hội tham gia vào một sự kiện cực kỳ hấp dẫn với những phần quà vô cùng giá trị\\! 💥🎁
-      
-      💥 Căng đét từng giây – Cháy quà từng phút – Gáy cực gắt cùng *BLV ${item.blv.toUpperCase()}*!
-      🎁 Tương tác càng nhiều – Quà càng khủng\\!
-      
-      ⏰ *VÀO NGAY KẺO HẾT – KHÔNG XEM LÀ PHÍ CẢ ĐỜI\\!*
-      
-      📺 *Link xem livestream:*
-      🔗 ${item.link || 'https://www.facebook.com/f168tv.tv'}
-      
-      🔹 *Page chính thức \\(tích xanh\\):*
-      👉 https://www.facebook.com/f168tv.net
-      
-      🔹 *Group Quán Quen F168TV:*
-      👉 https://www.facebook.com/groups/f168tv
-      
-      🔹 *Page PK Nổ Hũ:*
-      👉 https://www.facebook.com/PKF168TV
-      
-      🔹 *Page PK Bắn Cá:*
-      👉 https://www.facebook.com/PKBANCAF168TV
-      
-      🔹 *Channel Telegram Nổ Hũ:*
-      👉 https://t.me/F168PK
-      
-      🔹 *Channel Telegram Bắn Cá:*
-      👉 https://t.me/F168TVBANCA
+🎉 *THÔNG BÁO ĐẶC BIỆT* 🎉
+Chúng tôi xin thông báo về buổi livestream đặc biệt sắp tới tại *F168TV*. Đừng bỏ lỡ cơ hội tham gia vào một sự kiện cực kỳ hấp dẫn với những phần quà vô cùng giá trị\\! 💥🎁
 
-      🔹GROUP F168TV-KIẾM CƠM GẠO BCR
-      👉 https://t.me/F168TV_KiemComBCR
-      
-      📢 Tag bạn bè vào room – gào thét cùng *${item.blv.toUpperCase()}* – săn quà quét sạch room ngay\\!
-      `.trim();
+💥 Căng đét từng giây – Cháy quà từng phút – Gáy cực gắt cùng *BLV ${item.blv.toUpperCase()}*!
+🎁 Tương tác càng nhiều – Quà càng khủng\\!
 
-      // Gửi Telegram
+⏰ *VÀO NGAY KẺO HẾT – KHÔNG XEM LÀ PHÍ CẢ ĐỜI\\!*
+
+📺 *Link xem livestream:*
+🔗 ${item.link || 'https://www.facebook.com/f168tv.tv'}
+
+🔹 *Page chính thức \\(tích xanh\\):*
+👉 https://www.facebook.com/f168tv.net
+
+🔹 *Group Quán Quen F168TV:*
+👉 https://www.facebook.com/groups/f168tv
+
+🔹 *Page PK Nổ Hũ:*
+👉 https://www.facebook.com/PKF168TV
+
+🔹 *Page PK Bắn Cá:*
+👉 https://www.facebook.com/PKBANCAF168TV
+
+🔹 *Channel Telegram Nổ Hũ:*
+👉 https://t.me/F168PK
+
+🔹 *Channel Telegram Bắn Cá:*
+👉 https://t.me/F168TVBANCA
+
+🔹GROUP F168TV-KIẾM CƠM GẠO BCR
+👉 https://t.me/F168TV_KiemComBCR
+
+📢 Tag bạn bè vào room – gào thét cùng *${item.blv.toUpperCase()}* – săn quà quét sạch room ngay\\!
+`.trim();
+
       const escaped = escapeMarkdownV2(message.trim());
       const users = await TelegramLog.find();
       let count = 0;
-      
+
       for (const user of users) {
         try {
           await bot.sendMessage(user.telegramId, escaped, { parse_mode: 'MarkdownV2' });
@@ -146,13 +143,12 @@ cron.schedule('* * * * *', async () => {
 
       console.log(`✅ Đã gửi Telegram cho ${count} người`);
 
-      // Gửi ManyChat
-      const plainText = message.replace(/\\!/g, '!'); // xóa escape nếu cần
+      const plainText = message.replace(/\\!/g, '!');
       await sendManyChat(plainText);
 
       item.sent = true;
       await item.save();
-      console.log(`✅ Đã hoàn tất gửi cho lịch ${item.blv} lúc ${item.time}`);
+      console.log(`✅ Đã hoàn tất gửi lịch ${item.blv} lúc ${item.time}`);
     }
   }
 });
