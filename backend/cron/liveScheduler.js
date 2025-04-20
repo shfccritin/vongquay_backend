@@ -123,6 +123,9 @@ cron.schedule('* * * * *', async () => {
       
       🔹 *Channel Telegram Bắn Cá:*
       👉 https://t.me/F168TVBANCA
+
+      🔹GROUP F168TV-KIẾM CƠM GẠO BCR
+      👉 https://t.me/F168TV_KiemComBCR
       
       📢 Tag bạn bè vào room – gào thét cùng *${item.blv.toUpperCase()}* – săn quà quét sạch room ngay\\!
       `.trim();
