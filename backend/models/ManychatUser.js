@@ -6,8 +6,6 @@ const ManychatUserSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  name: String,
-  tag: String,
   createdAt: {
     type: Date,
     default: Date.now
