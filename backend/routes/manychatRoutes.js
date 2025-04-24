@@ -2,11 +2,29 @@ const express = require('express');
 const router = express.Router();
 const ManychatUser = require('../models/ManychatUser');
 
+
+
+const jwt = require("jsonwebtoken");
+
+// Middleware xác thực
+const auth = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  if (!token) return res.sendStatus(401);
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.sendStatus(403);
+  }
+};
+
+
 // Validate: chỉ nhận chuỗi số (ID của ManyChat)
 const isValidSubscriberId = (id) => /^[0-9]{5,}$/.test(id);
 
 // POST /manychat/collect
-router.post('/collect', async (req, res) => {
+router.post('/collect',auth, async (req, res) => {
   const { subscriber_id } = req.body;
 
   if (!subscriber_id || !isValidSubscriberId(subscriber_id)) {
@@ -28,7 +46,7 @@ router.post('/collect', async (req, res) => {
   }
 });
 
-router.post('/batch', async (req, res) => {
+router.post('/batch',auth, async (req, res) => {
     const { ids } = req.body;
   
     if (!Array.isArray(ids) || ids.length === 0) {
