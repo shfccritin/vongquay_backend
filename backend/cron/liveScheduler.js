@@ -127,7 +127,6 @@ Chúng tôi xin thông báo về buổi livestream đặc biệt sắp tới t�
 
 📢 Tag bạn bè vào room – gào thét cùng *${item.blv.toUpperCase()}* – săn quà quét sạch room ngay\\!
 `.trim();
-
       const escaped = escapeMarkdownV2(message.trim());
       const users = await TelegramLog.find();
       let count = 0;
@@ -135,6 +134,16 @@ Chúng tôi xin thông báo về buổi livestream đặc biệt sắp tới t�
       for (const user of users) {
         try {
           await bot.sendMessage(user.telegramId, escaped, { parse_mode: 'MarkdownV2' });
+
+          await bot.sendPhoto(
+            user.telegramId,
+            'https://link-anh-cua-bo.jpg', 
+            {
+              caption: '🔥 *Livestream cực cháy cùng BLV ${item.blv.toUpperCase()}!*',
+              parse_mode: 'MarkdownV2'
+            }
+          );
+      
           count++;
         } catch (err) {
           console.error(`❌ Gửi lỗi [${user.telegramId}]: ${err.message}`);
