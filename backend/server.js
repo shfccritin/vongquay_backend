@@ -59,6 +59,7 @@ const { Server } = require('socket.io');
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
+server.setTimeout(10 * 60 * 1000);
 server.listen(PORT, () => {
   console.log(`🚀 Server + Socket.IO running at http://localhost:${PORT}`);
 });
