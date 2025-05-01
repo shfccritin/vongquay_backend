@@ -137,7 +137,7 @@ Chúng tôi xin thông báo về buổi livestream đặc biệt sắp tới t�
 
           await bot.sendPhoto(
             user.telegramId,
-            'https://link-anh-cua-bo.jpg', 
+            'https://i.ibb.co/Ndy62CfK/photo-2025-05-01-18-49-33.jpg', 
             {
               caption: '🔥 *Livestream cực cháy cùng BLV ${item.blv.toUpperCase()}!*',
               parse_mode: 'MarkdownV2'
