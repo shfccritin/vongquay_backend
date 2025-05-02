@@ -133,16 +133,13 @@ Chúng tôi xin thông báo về buổi livestream đặc biệt sắp tới t�
 
       for (const user of users) {
         try {
-          await bot.sendMessage(user.telegramId, escaped, { parse_mode: 'MarkdownV2' });
-
           await bot.sendPhoto(
             user.telegramId,
-            'https://i.ibb.co/Ndy62CfK/photo-2025-05-01-18-49-33.jpg', 
-            {
-              caption: '🔥 *Livestream cực cháy cùng BLV ${item.blv.toUpperCase()}!*',
-              parse_mode: 'MarkdownV2'
-            }
+            'https://i.ibb.co/Ndy62CfK/photo-2025-05-01-18-49-33.jpg'
           );
+          await bot.sendMessage(user.telegramId, escaped, { parse_mode: 'MarkdownV2' });
+
+         
       
           count++;
         } catch (err) {
