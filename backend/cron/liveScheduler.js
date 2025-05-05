@@ -102,31 +102,25 @@ Chúng tôi xin thông báo về buổi livestream đặc biệt sắp tới t�
 ⏰ *VÀO NGAY KẺO HẾT – KHÔNG XEM LÀ PHÍ CẢ ĐỜI\\!*
 
 📺 *Link xem livestream:*
-🔗 ${item.link || 'https://www.facebook.com/f168tv.tv'}
+🔗 [BẤM XEM LIVESTREAM](${item.link || 'https://www.facebook.com/f168tv.tv'})
 
-🔹 *Page chính thức \\(tích xanh\\):*
-👉 https://www.facebook.com/f168tv.net
+🔹 *Page chính thức \\(tích xanh\\):* [F168TV.NET](https://www.facebook.com/f168tv.net)
 
-🔹 *Group Quán Quen F168TV:*
-👉 https://www.facebook.com/groups/f168tv
+🔹 *Group Quán Quen F168TV:* [Tham gia ngay](https://www.facebook.com/groups/f168tv)
 
-🔹 *Page PK Nổ Hũ:*
-👉 https://www.facebook.com/PKF168TV
+🔹 *Page PK Nổ Hũ:* [PKF168TV](https://www.facebook.com/PKF168TV)
 
-🔹 *Page PK Bắn Cá:*
-👉 https://www.facebook.com/PKBANCAF168TV
+🔹 *Page PK Bắn Cá:* [PK Bắn Cá](https://www.facebook.com/PKBANCAF168TV)
 
-🔹 *Channel Telegram Nổ Hũ:*
-👉 https://t.me/F168PK
+🔹 *Channel Telegram Nổ Hũ:* [F168PK](https://t.me/F168PK)
 
-🔹 *Channel Telegram Bắn Cá:*
-👉 https://t.me/F168TVBANCA
+🔹 *Channel Telegram Bắn Cá:* [F168TV Bắn Cá](https://t.me/F168TVBANCA)
 
-🔹GROUP F168TV-KIẾM CƠM GẠO BCR
-👉 https://t.me/F168TV_KiemComBCR
+🔹 *GROUP F168TV-KIẾM CƠM GẠO BCR:* [Vào nhóm](https://t.me/F168TV_KiemComBCR)
 
 📢 Tag bạn bè vào room – gào thét cùng *${item.blv.toUpperCase()}* – săn quà quét sạch room ngay\\!
 `.trim();
+
       const escaped = escapeMarkdownV2(message.trim());
       const users = await TelegramLog.find();
       let count = 0;
