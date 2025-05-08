@@ -93,33 +93,30 @@ cron.schedule('* * * * *', async () => {
       console.log(`⏱ Gửi lịch BLV ${item.blv} | liveTime: ${liveTime.toLocaleString()} | Now: ${now.toLocaleString()}`);
 
       const message = `
-🎉 *THÔNG BÁO ĐẶC BIỆT* 🎉
-Chúng tôi xin thông báo về buổi livestream đặc biệt sắp tới tại *F168TV*. Đừng bỏ lỡ cơ hội tham gia vào một sự kiện cực kỳ hấp dẫn với những phần quà vô cùng giá trị\\! 💥🎁
+🔥 *F168TV LIVESTREAM – QUẨY TỚI BẾN* 🔥
 
-💥 Căng đét từng giây – Cháy quà từng phút – Gáy cực gắt cùng *BLV ${item.blv.toUpperCase()}*!
-🎁 Tương tác càng nhiều – Quà càng khủng\\!
+💥 Căng đét từng giây – Cháy quà từng phút – Gáy cực gắt cùng *BLV ${item.blv.toUpperCase()}*
+🎁 Tương tác càng nhiều – Trúng quà càng đỉnh!🔥
 
-⏰ *VÀO NGAY KẺO HẾT – KHÔNG XEM LÀ PHÍ CẢ ĐỜI\\!*
+⏰ *VÀO NGAY KẺO HẾT – VẮNG MẶT LÀ MẤT QUÀ* 🔥
 
 📺 *Link xem livestream:*
-🔗 [BẤM XEM LIVESTREAM](${item.link || 'https://www.facebook.com/f168tv.tv'})
+🔗 [BẤM XEM LIVESTREAM](${item.link || 'https://www.facebook.com/100080292792390/videos/2084834398666290'})
 
-🔹 *Page chính thức \\(tích xanh\\):* [F168TV.NET](https://www.facebook.com/f168tv.net)
+🔹 *Page chính thức (tích xanh):* https://www.facebook.com/f168tv.net
 
 🔹 *Group Quán Quen F168TV:* [Tham gia ngay](https://www.facebook.com/groups/f168tv)
 
-🔹 *Page PK Nổ Hũ:* [PKF168TV](https://www.facebook.com/PKF168TV)
-
-🔹 *Page PK Bắn Cá:* [PK Bắn Cá](https://www.facebook.com/PKBANCAF168TV)
-
-🔹 *Channel Telegram Nổ Hũ:* [F168PK](https://t.me/F168PK)
-
-🔹 *Channel Telegram Bắn Cá:* [F168TV Bắn Cá](https://t.me/F168TVBANCA)
+🔹 *Channel Telegram F168TV:* https://t.me/trangchuf168tv
 
 🔹 *GROUP F168TV-KIẾM CƠM GẠO BCR:* [Vào nhóm](https://t.me/F168TV_KiemComBCR)
 
-📢 Tag bạn bè vào room – gào thét cùng *${item.blv.toUpperCase()}* – săn quà quét sạch room ngay\\!
+🔹 *GROUP NỔ HŨ F168TV:* https://t.me/NOHUF168TV
+
+📢 Tag bạn bè vào room – gào thét cùng *BLV ${item.blv.toUpperCase()}* nào #all  
+TELE HỖ TRỢ 24/7: https://t.me/CSKHF168_TV
 `.trim();
+
 
       const escaped = escapeMarkdownV2(message.trim());
       const users = await TelegramLog.find();
@@ -133,8 +130,8 @@ Chúng tôi xin thông báo về buổi livestream đặc biệt sắp tới t�
           );
           await bot.sendMessage(user.telegramId, escaped, { parse_mode: 'MarkdownV2' });
 
-         
-      
+
+
           count++;
         } catch (err) {
           console.error(`❌ Gửi lỗi [${user.telegramId}]: ${err.message}`);
