@@ -20,40 +20,49 @@ router.post("/check-code", async (req, res) => {
 router.post("/spin", async (req, res) => {
   const { code } = req.body;
 
-  // Kiểm tra mã quay
   const codeEntry = await Code.findOne({ code });
+  if (!codeEntry || codeEntry.used) {
+    return res.status(400).json({ success: false, message: "Mã không hợp lệ hoặc đã sử dụng" });
+  }
+
   if (codeEntry.promoCode && codeEntry.used) {
     return res.status(400).json({
       success: false,
-      message: `🎉 Mã dự thưởng này đã được sử dụng trước đó.\n
-      👉 Phần thưởng của bạn: *${codeEntry.reward}*\n
-      🔑 Mã khuyến mãi: *${codeEntry.promoCode}*`
+      message: `🎉 Mã dự thưởng này đã được sử dụng trước đó.\n👉 Phần thưởng của bạn: *${codeEntry.reward}*\n🔑 Mã khuyến mãi: *${codeEntry.promoCode}*`
     });
   }
-  
-  if (!codeEntry || codeEntry.used)
-    return res.status(400).json({ success: false, message: "Mã không hợp lệ hoặc đã sử dụng" });
-  const rewards = await Reward.find({ isFake: { $ne: true }, chance: { $gt: 0 } });
-  if (!rewards.length)
-    return res.status(500).json({ success: false, message: "Không có phần thưởng hợp lệ nào" });
 
-  // Chọn phần thưởng theo tỷ lệ
-  const totalChance = rewards.reduce((sum, r) => sum + r.chance, 0);
-  let rand = Math.random() * totalChance;
   let selectedReward = null;
-  for (const reward of rewards) {
-    if (rand < reward.chance) {
-      selectedReward = reward;
-      break;
+
+  // ✅ Nếu mã có rewardId → chọn đúng giải đã gán
+  if (codeEntry.rewardId) {
+    selectedReward = await Reward.findById(codeEntry.rewardId);
+    if (!selectedReward) {
+      return res.status(400).json({ success: false, message: "Giải thưởng đã gán không còn tồn tại" });
     }
-    rand -= reward.chance;
+  } else {
+    // ✅ Nếu không có rewardId → quay random như logic cũ
+    const rewards = await Reward.find({ isFake: { $ne: true }, chance: { $gt: 0 } });
+    if (!rewards.length) {
+      return res.status(500).json({ success: false, message: "Không có phần thưởng hợp lệ nào" });
+    }
+
+    const totalChance = rewards.reduce((sum, r) => sum + r.chance, 0);
+    let rand = Math.random() * totalChance;
+    for (const reward of rewards) {
+      if (rand < reward.chance) {
+        selectedReward = reward;
+        break;
+      }
+      rand -= reward.chance;
+    }
+
+    if (!selectedReward) {
+      return res.status(500).json({ success: false, message: "Không tìm được phần thưởng phù hợp." });
+    }
   }
 
-  if (!selectedReward) {
-    return res.status(500).json({ success: false, message: "Không tìm được phần thưởng phù hợp." });
-  }
-
-  // Lấy mã đổi thưởng chưa dùng
+  // ✅ Lấy mã khuyến mãi chưa dùng
   const rewardCode = await RewardCode.findOneAndUpdate(
     { rewardId: selectedReward._id, used: false },
     { used: true, usedAt: new Date() },
@@ -61,24 +70,23 @@ router.post("/spin", async (req, res) => {
   );
 
   if (!rewardCode) {
-    return res.status(500).json({ success: false, message: "Phần thưởng đã hết mã đổi thưởng!" });
+    return res.status(500).json({ success: false, message: "Phần thưởng đã hết mã khuyến mãi!" });
   }
 
-  // Đánh dấu mã quay đã dùng
+  // ✅ Đánh dấu mã đã dùng
   codeEntry.used = true;
   codeEntry.usedAt = new Date();
-  codeEntry.promoCode = rewardCode.code ;
-  codeEntry.reward = selectedReward.label
+  codeEntry.promoCode = rewardCode.code;
+  codeEntry.reward = selectedReward.label;
   await codeEntry.save();
 
-  // Ghi log quay
+  // ✅ Ghi log
   await new SpinLog({
     code,
     reward: selectedReward.label,
     createdAt: new Date()
   }).save();
-  
-  // Trả kết quả về client
+
   return res.json({
     success: true,
     reward: {
@@ -88,6 +96,7 @@ router.post("/spin", async (req, res) => {
     }
   });
 });
+
 
 
 module.exports = router;

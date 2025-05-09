@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Code = require("../models/Code");
+const Reward = require("../models/Reward");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const xlsx = require("xlsx");
-const path = require("path");
 const upload = multer({ dest: "uploads/" });
 
-// Middleware xác thực token
 const auth = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.sendStatus(401);
@@ -20,34 +19,38 @@ const auth = (req, res, next) => {
   }
 };
 
-// Lấy danh sách mã
 router.get("/", auth, async (req, res) => {
-  const codes = await Code.find().sort({ used: 1, usedAt: -1 });
+  const codes = await Code.find()
+    .sort({ used: 1, usedAt: -1 })
+    .populate("rewardId", "label");
   res.json(codes);
 });
 
-// Thêm mã mới
 router.post("/", auth, async (req, res) => {
-  const { code } = req.body;
+  const { code, rewardId } = req.body;
   if (!code) {
     return res.status(400).json({ message: "Thiếu mã" });
   }
-  try {
-    const exists = await Code.findOne({ code });
-    if (exists) {
-      return res.status(400).json({ message: "Mã đã tồn tại trong hệ thống" });
-    }
-    const newCode = new Code({ code });
-    await newCode.save();
-    res.json({ success: true, code: newCode });
-  } catch (err) {
-    console.error("Lỗi khi thêm mã:", err);
-    res.status(500).json({ message: "Lỗi khi thêm mã" });
+
+  const exists = await Code.findOne({ code });
+  if (exists) {
+    return res.status(400).json({ message: "Mã đã tồn tại trong hệ thống" });
   }
+
+  let reward = null;
+  if (rewardId) {
+    reward = await Reward.findById(rewardId);
+    if (!reward) {
+      return res.status(400).json({ message: "Giải thưởng không tồn tại" });
+    }
+  }
+
+  const newCode = new Code({ code, rewardId: reward?._id });
+  await newCode.save();
+  res.json({ success: true, code: newCode });
 });
 
 
-// Xoá mã
 router.delete("/:id", auth, async (req, res) => {
   try {
     const deleted = await Code.findByIdAndDelete(req.params.id);
@@ -61,39 +64,45 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-
-// Upload file Excel
 router.post("/import", auth, upload.single("file"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ message: "Không tìm thấy file" });
     const workbook = xlsx.readFile(req.file.path);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = xlsx.utils.sheet_to_json(sheet);
-    const allCodes = data
-      .map(row => row.code?.toString().trim())
-      .filter(Boolean);
-    if (allCodes.length === 0) {
-      return res.status(400).json({ message: "Không có mã hợp lệ trong file" });
+
+    const insert = [], duplicated = [];
+
+    for (const row of data) {
+      const code = row.code?.toString().trim();
+      const rewardLabel = row.reward?.toString().trim();
+      if (!code || !rewardLabel) continue;
+
+      const exists = await Code.findOne({ code });
+      if (exists) {
+        duplicated.push(code);
+        continue;
+      }
+
+      const reward = await Reward.findOne({ label: new RegExp(`^${rewardLabel}$`, "i") });
+      if (!reward) {
+        duplicated.push(`${code} (giải '${rewardLabel}' không tồn tại)`);
+        continue;
+      }
+
+      insert.push({ code, rewardId: reward._id });
     }
-    const existingCodes = await Code.find({ code: { $in: allCodes } }).distinct("code");
-    const newCodes = allCodes.filter(code => !existingCodes.includes(code));
-    const duplicates = allCodes.filter(code => existingCodes.includes(code));
-    if (newCodes.length === 0) {
-      return res.status(400).json({ message: "Tất cả mã trong file đều đã tồn tại" });
-    }
-    const insertDocs = newCodes.map(code => ({ code }));
-    await Code.insertMany(insertDocs);
-    res.json({
-      success: true,
-      imported: newCodes.length,
-      duplicated: duplicates
-    });
+
+    if (insert.length === 0)
+      return res.status(400).json({ message: "Không có mã hợp lệ" });
+
+    await Code.insertMany(insert);
+    res.json({ success: true, imported: insert.length, duplicated });
   } catch (err) {
     console.error("Lỗi khi import file:", err);
     res.status(500).json({ message: "Lỗi khi import file" });
   }
 });
-
 
 
 module.exports = router;
