@@ -126,7 +126,7 @@ TELE HỖ TRỢ 24/7: https://t.me/CSKHF168_TV
         try {
           await bot.sendPhoto(
             user.telegramId,
-            'https://i.ibb.co/Ndy62CfK/photo-2025-05-01-18-49-33.jpg'
+            'https://iili.io/38cvpa9.webp'
           );
           await bot.sendMessage(user.telegramId, escaped, { parse_mode: 'MarkdownV2' });
 
