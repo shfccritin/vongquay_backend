@@ -92,7 +92,7 @@ router.post("/spin", async (req, res) => {
    // ✅ Gửi Telegram
   const mask = (str) => str.length > 5 ? str.slice(0, -5) + '*****' : '*****';
   const telegramMessage = `
-🎉 *Người chơi vừa trúng thưởng!*
+🎉 *Người chơi vừa trúng thưởng vòng quay!*
 - 🎁 Giải: *${selectedReward.label}*
 - 🔑 Mã KM: \`${mask(rewardCode.code)}\`
 - 🔤 Mã quay: \`${mask(code)}\`
@@ -108,7 +108,7 @@ router.post("/spin", async (req, res) => {
   }).catch(err => {
     console.error('[Telegram Send Error]', err.message || err);
   });
-  
+
   return res.json({
     success: true,
     reward: {
