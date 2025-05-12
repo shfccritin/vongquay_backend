@@ -4,7 +4,9 @@ const Code = require("../models/Code");
 const Reward = require("../models/Reward");
 const SpinLog = require("../models/SpinLog");
 const RewardCode = require("../models/RewardCode");
-
+const TELEGRAM_BOT_TOKEN = '7141621143:AAHEcXkdnxlQx45ELy_McUDo-XCwDKXm_oY';
+const TELEGRAM_CHAT_ID = '-1002096251349';
+const axios = require("axios");
 // API kiểm tra mã
 router.post("/check-code", async (req, res) => {
   const { code } = req.body;
@@ -87,6 +89,26 @@ router.post("/spin", async (req, res) => {
     createdAt: new Date()
   }).save();
 
+   // ✅ Gửi Telegram
+  const mask = (str) => str.length > 5 ? str.slice(0, -5) + '*****' : '*****';
+  const telegramMessage = `
+🎉 *Người chơi vừa trúng thưởng!*
+- 🎁 Giải: *${selectedReward.label}*
+- 🔑 Mã KM: \`${mask(rewardCode.code)}\`
+- 🔤 Mã quay: \`${mask(code)}\`
+`.trim();
+
+  axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    chat_id: TELEGRAM_CHAT_ID,
+    text: telegramMessage,
+    parse_mode: 'Markdown'
+  }, {
+    timeout: 5000,
+    family: 4
+  }).catch(err => {
+    console.error('[Telegram Send Error]', err.message || err);
+  });
+  
   return res.json({
     success: true,
     reward: {
